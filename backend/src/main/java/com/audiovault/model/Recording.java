@@ -24,9 +24,18 @@ public class Recording {
     @Column(nullable = false)
     private String fileName;
 
+    @Column(nullable = false)
+    private String filePath;
+
     @Positive(message = "Duration must be positive")
     @Column(nullable = false)
     private Integer duration;
+
+    @Column(nullable = false)
+    private Long fileSize;
+
+    @Column(nullable = false)
+    private String contentType;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime uploadDate;
