@@ -42,6 +42,13 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- MinIO SDK (S3-compatible storage) -->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.5.7</version>
+        </dependency>
+
         <!-- Spring Boot DevTools (auto-reload during development) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

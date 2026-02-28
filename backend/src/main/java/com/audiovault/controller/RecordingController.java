@@ -6,8 +6,8 @@ import com.audiovault.service.RecordingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Path;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -84,8 +84,8 @@ public class RecordingController {
         Recording recording = recordingOpt.get();
 
         try {
-            Path filePath = fileStorageService.loadFile(recording.getFilePath());
-            Resource resource = new UrlResource(filePath.toUri());
+            InputStream inputStream = fileStorageService.getFileStream(recording.getFilePath());
+            InputStreamResource resource = new InputStreamResource(inputStream);
 
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(recording.getContentType()))
@@ -97,35 +97,6 @@ public class RecordingController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    /**
-     * Download a recording file
-     * GET /api/recordings/{id}/download
-     */
-    /*
-     * @GetMapping("/{id}/download")
-     * public ResponseEntity<Resource> downloadRecording(@PathVariable Long id) {
-     * log.info("Received download request for recording ID: {}", id);
-     * 
-     * return recordingService.getRecordingById(id)
-     * .<ResponseEntity<Resource>>map(recording -> {
-     * try {
-     * Path filePath = fileStorageService.loadFile(recording.getFilePath());
-     * Resource resource = new UrlResource(filePath.toUri());
-     * 
-     * return ResponseEntity.ok()
-     * .contentType(MediaType.parseMediaType(recording.getContentType()))
-     * .header(HttpHeaders.CONTENT_DISPOSITION,
-     * "attachment; filename=\"" + recording.getFileName() + "\"")
-     * .body(resource);
-     * } catch (Exception e) {
-     * log.error("Error loading file for recording {}", id, e);
-     * return ResponseEntity.<Resource>notFound().build();
-     * }
-     * })
-     * .orElse(ResponseEntity.notFound().build());
-     * }
-     */
 
     /**
      * Get all recordings

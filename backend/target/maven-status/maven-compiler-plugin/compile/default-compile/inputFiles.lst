@@ -4,4 +4,5 @@
 /Users/sanabulbule/Documents/projects/java/audioVault/audio-vault/backend/src/main/java/com/audiovault/model/Recording.java
 /Users/sanabulbule/Documents/projects/java/audioVault/audio-vault/backend/src/main/java/com/audiovault/service/FileStorageService.java
 /Users/sanabulbule/Documents/projects/java/audioVault/audio-vault/backend/src/main/java/com/audiovault/repository/RecordingRepository.java
+/Users/sanabulbule/Documents/projects/java/audioVault/audio-vault/backend/src/main/java/com/audiovault/config/MinioConfig.java
 /Users/sanabulbule/Documents/projects/java/audioVault/audio-vault/backend/src/main/java/com/audiovault/service/RecordingService.java

@@ -25,13 +25,13 @@ public class RecordingService {
     public Recording createRecording(MultipartFile file, Integer duration) {
         log.info("Creating new recording: {}", file.getOriginalFilename());
 
-        // Store file on disk
-        String filePath = fileStorageService.storeFile(file);
+        // Store file in MinIO (returns object name, not path)
+        String objectName = fileStorageService.storeFile(file);
 
         // Create recording entity
         Recording recording = new Recording();
         recording.setFileName(file.getOriginalFilename());
-        recording.setFilePath(filePath);
+        recording.setFilePath(objectName); // Storw MinIO object name
         recording.setDuration(duration);
         recording.setFileSize(file.getSize());
         recording.setContentType(file.getContentType());
@@ -47,9 +47,9 @@ public class RecordingService {
      */
     @Transactional
     public Recording createRecording(Recording recording) {
-        log.info("Creating new recording: {}", recording.getFileName());
+        log.info("Creating new recording in database: {}", recording.getFileName());
         Recording savedRecording = recordingRepository.save(recording);
-        log.info("Recording created with ID: {}", savedRecording.getId());
+        log.info("Recording created in database with ID: {}", savedRecording.getId());
         return savedRecording;
     }
 
@@ -58,7 +58,7 @@ public class RecordingService {
      */
     @Transactional(readOnly = true)
     public List<Recording> getAllRecordings() {
-        log.info("Fetching all recordings");
+        log.info("Fetching all recordings from database");
         return recordingRepository.findAll();
     }
 
@@ -85,7 +85,7 @@ public class RecordingService {
      */
     @Transactional
     public boolean deleteRecording(Long id) {
-        log.info("Deleting recording with ID: {}", id);
+        log.info("Deleting recording from database with ID: {}", id);
 
         Optional<Recording> recordingOpt = recordingRepository.findById(id);
         if (recordingOpt.isPresent()) {
@@ -98,7 +98,7 @@ public class RecordingService {
 
             // Delete from database
             recordingRepository.deleteById(id);
-            log.info("Recording deleted successfully with ID: {}", id);
+            log.info("Recording deleted from database successfully with ID: {}", id);
             return true;
         }
 
