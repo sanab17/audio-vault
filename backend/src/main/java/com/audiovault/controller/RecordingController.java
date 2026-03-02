@@ -1,5 +1,6 @@
 package com.audiovault.controller;
 
+import com.audiovault.dto.PreSignedUrlResponse;
 import com.audiovault.model.Recording;
 import com.audiovault.service.FileStorageService;
 import com.audiovault.service.RecordingService;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/recordings")
@@ -65,6 +67,33 @@ public class RecordingController {
         Recording createdRecording = recordingService.createRecording(recording);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdRecording);
 
+    }
+   
+    /*
+     * Get pre-signed URL for recording download (secure, time-limited)
+     */
+    @GetMapping("/{id}/url")
+    public ResponseEntity<PreSignedUrlResponse> getPreSignedUrl(@PathVariable Long id) {
+        log.info("Received request for pre-signed URL for recording ID: {}", id);
+
+        Optional<Recording> recordingOpt = recordingService.getRecordingById(id);
+
+        if (recordingOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            Recording recording = recordingOpt.get();
+            String preSignedUrl = fileStorageService.getPreSignedUrl(recording.getFilePath());
+            int expirySeconds = fileStorageService.getPreSignedUrlExpirySeconds();
+
+            PreSignedUrlResponse response = new PreSignedUrlResponse(preSignedUrl, expirySeconds);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            log.error("Error generating pre-signed URL for recording {}", id, e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     /*

@@ -23,6 +23,9 @@ public class FileStorageService {
     @Value("${minio.bucket-name}")
     private String bucketName;
 
+    @Value("${minio.presigned-url-expiry-hours}")
+    private int preSignedUrlExpiryHours;
+
     /*
      * Initialize MinIO bucket on application startup. This ensures 
      * that the bucket exists before any file operations are performed.
@@ -112,18 +115,30 @@ public class FileStorageService {
      */
     public String getPreSignedUrl(String filename) {
         try {
-            return minioClient.getPresignedObjectUrl(
+             String url = minioClient.getPresignedObjectUrl(
                 GetPresignedObjectUrlArgs.builder()
                     .method(Method.GET)
                     .bucket(bucketName)
                     .object(filename)
-                    .expiry(1, TimeUnit.HOURS)
+                    .expiry(preSignedUrlExpiryHours, TimeUnit.HOURS)
                     .build()
             );
+
+            log.info("Generated pre-signed URL for: {} (expires in {} hours)", 
+                     filename, preSignedUrlExpiryHours);
+
+            return url;
         } catch (Exception e) {
             log.error("Failed to generate pre-signed URL for file: {}", filename, e);
             throw new RuntimeException("Failed to generate pre-signed URL for file: " + filename, e);
         }
+    }
+
+    /**
+     * Get expiry time in seconds for pre-signed URLs
+     */
+    public int getPreSignedUrlExpirySeconds() {
+        return preSignedUrlExpiryHours * 3600;
     }
 
     /*
@@ -167,98 +182,3 @@ public class FileStorageService {
         }
     }
 }
-
-/*
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-
-@Service
-@Slf4j
-public class FileStorageService {
-
-    @Value("${file.upload-dir:uploads}")
-    private String uploadDir;
-
-    // 
-    //  Initialize upload directory
-    //  
-    public void init() {
-        try {
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-                log.info("Created upload directory: {}", uploadPath.toAbsolutePath());
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Could not create upload directory!", e);
-        }
-    }
-    
-    // 
-    //  Store file on disk and return the file path
-    //  
-    public String storeFile(MultipartFile file) {
-        init(); // Ensure directory exists
-
-        try {
-            // Generate unique filename to avoid collisions
-            String originalFilename = file.getOriginalFilename();
-            String fileExtension = originalFilename != null && originalFilename.contains(".")
-                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                    : "";
-            
-            String uniqueFilename = UUID.randomUUID().toString() + fileExtension;
-            
-            // Copy file to upload directory
-            Path targetLocation = Paths.get(uploadDir).resolve(uniqueFilename);
-            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-            
-            log.info("Stored file: {} as {}", originalFilename, uniqueFilename);
-            return targetLocation.toString();
-        } catch (IOException e) {
-            log.error("Failed to store file", e);
-            throw new RuntimeException("Failed to store file", e);
-        }
-    }
-
-    // 
-    //  Load file from disk
-    //  
-    public Path loadFile(String filePath) {
-        try {
-            Path file = Paths.get(filePath);
-            if(Files.exists(file) && Files.isReadable(file)) {
-                return file;
-            }
-            else {
-                throw new RuntimeException("File not accessible: " + filePath);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Error loading file: " + filePath, e);
-        }
-    }
-
-    // 
-    //  Delete file from disk
-    //  
-    public boolean deleteFile(String filePath) {
-        try {
-            Path file = Paths.get(filePath);
-            boolean deleted = Files.deleteIfExists(file);
-            if (deleted) {
-                log.info("Deleted file: {}", filePath);
-            } else {
-                log.warn("File not found for deletion: {}", filePath);
-            }
-            return deleted;
-        } catch (IOException e) {
-            log.error("Failed to delete file: {}", filePath, e);
-            return false;
-        }
-    }
-}
-*/
