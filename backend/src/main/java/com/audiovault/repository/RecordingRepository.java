@@ -2,12 +2,13 @@ package com.audiovault.repository;
 
 import com.audiovault.model.Recording;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface RecordingRepository extends JpaRepository<Recording, Long> {
+public interface RecordingRepository extends JpaRepository<Recording, Long>, JpaSpecificationExecutor<Recording> {
     
     // Spring Data JPA will automatically implement these methods
 

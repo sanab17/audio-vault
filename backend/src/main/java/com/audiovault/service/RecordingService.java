@@ -1,7 +1,10 @@
 package com.audiovault.service;
 
+import com.audiovault.dto.SearchCriteria;
 import com.audiovault.model.Recording;
 import com.audiovault.repository.RecordingRepository;
+import com.audiovault.specification.RecordingSpecification;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -78,6 +81,14 @@ public class RecordingService {
     public List<Recording> searchByFileName(String fileName) {
         log.info("Searching recordings by file name: {}", fileName);
         return recordingRepository.findByFileNameContainingIgnoreCase(fileName);
+    }
+
+    /*
+     * Search recordings by criteria
+     */
+    @Transactional(readOnly = true)
+    public List<Recording> searchRecordings(SearchCriteria criteria) {
+        return recordingRepository.findAll(RecordingSpecification.withCriteria(criteria));
     }
 
     /**

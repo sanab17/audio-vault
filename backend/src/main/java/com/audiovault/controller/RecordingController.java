@@ -1,6 +1,7 @@
 package com.audiovault.controller;
 
 import com.audiovault.dto.PreSignedUrlResponse;
+import com.audiovault.dto.SearchCriteria;
 import com.audiovault.model.Recording;
 import com.audiovault.service.FileStorageService;
 import com.audiovault.service.RecordingService;
@@ -151,13 +152,13 @@ public class RecordingController {
     }
 
     /**
-     * Search recordings by file name
-     * GET /api/recordings/search?fileName=xyz
+     * Advanced search with multiple filters
+     * GET /api/recordings/search?fileName=x&minDuration=60&contentType=audio/mpeg
      */
     @GetMapping("/search")
-    public ResponseEntity<List<Recording>> searchRecordings(@RequestParam String fileName) {
-        log.info("Received request to search recordings by file name: {}", fileName);
-        List<Recording> recordings = recordingService.searchByFileName(fileName);
+    public ResponseEntity<List<Recording>> searchRecordings(@ModelAttribute SearchCriteria criteria) {
+        log.info("Received advanced search request: {}", criteria);
+        List<Recording> recordings = recordingService.searchRecordings(criteria);
         return ResponseEntity.ok(recordings);
     }
 

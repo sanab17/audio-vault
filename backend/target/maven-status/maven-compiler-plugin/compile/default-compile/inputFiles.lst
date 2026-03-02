@@ -1,3 +1,4 @@
+/Users/sanabulbule/Documents/projects/java/audioVault/audio-vault/backend/src/main/java/com/audiovault/dto/SearchCriteria.java
 /Users/sanabulbule/Documents/projects/java/audioVault/audio-vault/backend/src/main/java/com/audiovault/dto/PreSignedUrlResponse.java
 /Users/sanabulbule/Documents/projects/java/audioVault/audio-vault/backend/src/main/java/com/audiovault/AudioVaultApplication.java
 /Users/sanabulbule/Documents/projects/java/audioVault/audio-vault/backend/src/main/java/com/audiovault/controller/HealthController.java
@@ -7,3 +8,4 @@
 /Users/sanabulbule/Documents/projects/java/audioVault/audio-vault/backend/src/main/java/com/audiovault/repository/RecordingRepository.java
 /Users/sanabulbule/Documents/projects/java/audioVault/audio-vault/backend/src/main/java/com/audiovault/config/MinioConfig.java
 /Users/sanabulbule/Documents/projects/java/audioVault/audio-vault/backend/src/main/java/com/audiovault/service/RecordingService.java
+/Users/sanabulbule/Documents/projects/java/audioVault/audio-vault/backend/src/main/java/com/audiovault/specification/RecordingSpecification.java
