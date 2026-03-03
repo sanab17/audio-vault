@@ -1,10 +1,11 @@
 package com.audiovault.service;
 
+import com.audiovault.dto.RecordingEvent;
 import com.audiovault.dto.SearchCriteria;
+import com.audiovault.kafka.RecordingEventProducer;
 import com.audiovault.model.Recording;
 import com.audiovault.repository.RecordingRepository;
 import com.audiovault.specification.RecordingSpecification;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class RecordingService {
 
     private final RecordingRepository recordingRepository;
     private final FileStorageService fileStorageService;
+    private final RecordingEventProducer eventProducer;
 
     /**
      * Create a new recording with file upload
@@ -40,6 +42,8 @@ public class RecordingService {
         recording.setContentType(file.getContentType());
 
         Recording savedRecording = recordingRepository.save(recording);
+        // Publish
+        eventProducer.publishRecordingCreated(RecordingEvent.created(savedRecording));
         log.info("Recording created with ID: {}", savedRecording.getId());
 
         return savedRecording;
@@ -107,6 +111,8 @@ public class RecordingService {
                 fileStorageService.deleteFile(recording.getFilePath());
             }
 
+            // Publish
+            eventProducer.publishRecordingDeleted(RecordingEvent.deleted(recording));
             // Delete from database
             recordingRepository.deleteById(id);
             log.info("Recording deleted from database successfully with ID: {}", id);
