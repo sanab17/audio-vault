@@ -21,12 +21,12 @@ public class RecordingEventProducer {
     private String recordingDeletedTopic;
 
     public void publishRecordingCreated(RecordingEvent event) {
-        log.info("Publishing recording.created event for ID: {}", event.getRecordingId());
-        kafkaTemplate.send(recordingCreatedTopic, event.getRecordingId().toString(), event);
+        log.info("Publishing recording.created event for ID: {}", event.getId());
+        kafkaTemplate.send(recordingCreatedTopic, event.getId().toString(), event);
     }
 
     public void publishRecordingDeleted(RecordingEvent event) {
-        log.info("Publishing recording.deleted event for ID: {}", event.getRecordingId());
-        kafkaTemplate.send(recordingDeletedTopic, event.getRecordingId().toString(), event);
+        log.info("Publishing recording.deleted event for ID: {}", event.getId());
+        kafkaTemplate.send(recordingDeletedTopic, event.getId().toString(), event);
     }
 }

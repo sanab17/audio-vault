@@ -12,38 +12,41 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RecordingEvent {
     
-    private String eventType;       // "CREATED" or "DELETED"
-    private Long recordingId;
+    private Long id;
     private String fileName;
     private String filePath;
-    private String contentType;
     private Integer duration;
     private Long fileSize;
-    private LocalDateTime occurredAt;
+    private String contentType;
+    private LocalDateTime uploadDate;
+    private String eventType;       // "CREATED" or "DELETED"
 
+    // Factory method for CREATED events
     public static RecordingEvent created(Recording recording) {
-        return new RecordingEvent(
-            "CREATED",
-            recording.getId(),
-            recording.getFileName(),
-            recording.getFilePath(),
-            recording.getContentType(),
-            recording.getDuration(),
-            recording.getFileSize(),
-            LocalDateTime.now()
-        );
+        RecordingEvent event = new RecordingEvent();
+        event.setId(recording.getId());
+        event.setFileName(recording.getFileName());
+        event.setFilePath(recording.getFilePath());
+        event.setDuration(recording.getDuration());
+        event.setFileSize(recording.getFileSize());
+        event.setContentType(recording.getContentType());
+        event.setUploadDate(recording.getUploadDate());
+        event.setEventType("CREATED");
+        return event;
     }
 
+    // Factory method for DELETED events
     public static RecordingEvent deleted(Recording recording) {
-        return new RecordingEvent(
-            "DELETED",
-            recording.getId(),
-            recording.getFileName(),
-            recording.getFilePath(),
-            recording.getContentType(),
-            recording.getDuration(),
-            recording.getFileSize(),
-            LocalDateTime.now()
-        );
+        RecordingEvent event = new RecordingEvent();
+        event.setId(recording.getId());
+        event.setFileName(recording.getFileName());
+        event.setFilePath(recording.getFilePath());
+        event.setDuration(recording.getDuration());
+        event.setFileSize(recording.getFileSize());
+        event.setContentType(recording.getContentType());
+        event.setUploadDate(recording.getUploadDate());
+        event.setEventType("DELETED");
+        return event;
     }
+
 }
