@@ -42,6 +42,7 @@ public class RecordingService {
         recording.setContentType(file.getContentType());
 
         Recording savedRecording = recordingRepository.save(recording);
+        // recording.setId(savedRecording.getId());
         // Publish
         eventProducer.publishRecordingCreated(RecordingEvent.created(savedRecording));
         log.info("Recording created with ID: {}", savedRecording.getId());
